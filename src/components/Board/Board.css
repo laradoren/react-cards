@@ -45,6 +45,12 @@
     grid-row-gap: 15px;
 }
 
+.addForm {
+    color: #9FA5A6;
+    padding: 15px;
+    background-color: #2b2d33;
+}
+
 .light {
     color: #dadce0;
 }
@@ -95,6 +101,7 @@
 
 .addCardText{
     margin-left: 10px;
+    
 }
 
 .inputAdd {
@@ -105,6 +112,7 @@
     border: none;
     color: #dadce0;
     font-family: 'Open Sans', sans-serif;
+    width: 90%;
 }
 
 .addCardTextAdd {
@@ -113,6 +121,7 @@
     margin-right: 20px;
     padding: 5px 20px;
     cursor: pointer;
+    border: none;
 }
 
 .closeAdd{
