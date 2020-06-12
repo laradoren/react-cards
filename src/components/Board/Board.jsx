@@ -1,17 +1,21 @@
 import React from 'react';
 import './Board.css';
-import RowContainer from './RowContainer';
+import Row from './Row';
 
 const Board = (props) => {
-  let row = [{id: 0},
-             {id: 1},
-             {id: 2},
-             {id: 3}];
+    const row = [{id: 0,
+                  title: "ON HOLD"},
+                 {id: 1,
+                  title: "IN PROGRESS"},
+                 {id: 2,
+                  title: "NEEDS REVIEW"},
+                 {id: 3,
+                  title: "APPROVED"}];
   return (
     <div className="boardBlock">
         <div className="boardCards">
             {
-                row.map( r =>  <RowContainer key = {r.id}  id = {r.id} /> )
+                row.map( r =>  <Row key = {r.id}  id = {r.id} title = {r.title} token = {props.token} /> )
             }  
         </div>
     </div>

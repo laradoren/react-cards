@@ -1,5 +1,3 @@
-import { boardAPI } from "../api/api";
-
 const SET_CARDS = 'SET_CARDS';
 const ADD_CARD = 'ADD-CARD';
 const DELETE_CARD = 'DELETE-CARD';
@@ -7,9 +5,9 @@ const TITLE_CHANGE = 'TITLE-CHANGE'
 
 
 let initialState = {
-    cards: [],
-    newTitle : null,
-    newRow: null
+    cards: [ ],
+    text: " ",
+    row: null
 }
 
 export const boardReducer = (state = initialState, action) => {
@@ -43,15 +41,15 @@ export const addNewCard = ({newRow, newTitle}) => ({ type: ADD_CARD, card: {newR
 
 export const requestCards = () => {
     return async (dispatch) => {
-        let data = await boardAPI.requestCards();
-        dispatch(setCards(data));
+        //let data = await boardAPI.requestCards();
+        //dispatch(setCards(data));
     };
 };
 
 export const createNewCards = ({newRow, newTitle}) => {
     return async (dispatch) => {
-        await boardAPI.createCard({newRow, newTitle});  
-            dispatch(addNewCard({newRow, newTitle}));     
+        //await boardAPI.createCard({newRow, newTitle});  
+        dispatch(addNewCard({newRow, newTitle}));     
     };
 };
 

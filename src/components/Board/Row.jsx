@@ -1,68 +1,87 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import './Board.css';
 import close1 from './../../close1.svg';
 import more from './../../more.svg';
 import Card from './Card';
+import { cardsAPI } from '../../api/api';
 
-let renderSwitch = (param) => {
-    switch(param) {
-        case 0:
-            return 'ON HOLD';
-        case 1:
-            return 'IN PROGRESS';
-        case 2:
-            return 'NEEDS REVIEW';
-        case 3:
-            return 'APPROVED';
-        default:
-            return ' ';
-    }
-  };
+
+class Row extends Component {
+    constructor (props) {
+        super(props);
+        this.state = {
+          addMode: false,
+          cards: [ ],
+          text: " ",
+          row: this.props.id
+        };
+        this.changeMode = this.changeMode.bind(this);        
+        this.handleFieldChange = this.handleFieldChange.bind(this);
+        this.addNewCard = this.addNewCard.bind(this);
+        this.deleteCard = this.deleteCard.bind(this);
+      }
  
-let Row = ({cards, id, onTitleChange}) => {
-    if(cards === undefined) {
-        cards = []; ///CHANGE!!
-    }
-    let cardsRow = cards.filter( c => c.row == id).map( c => {
-        return <Card key = {c.id} id = {c.id} text = {c.text} row = {c.row} />
-    });
-    const [addMode, setAddMode] = useState(false);
-    let clasN = "rowHeader" + id;
+      componentDidMount() {
+        cardsAPI.requestCards()
+        .then(response => {
+            this.setState({
+              cards: response
+            });
+          });
+      }
 
-    let onFieldChange =  (event) => {
-        onTitleChange(event.target.value, id);
-    };
+      changeMode(value){
+        this.setState({
+            addMode: value
+          });
+      }
 
-    let handleCreateNewCard = (event) => {
+      handleFieldChange(event) {
+        this.setState({
+            text: event.target.value
+        });
+      }
+
+      addNewCard(event) {
+          const formDate = new FormData();
+          formDate.append('text',this.state.text);
+          formDate.append('row',this.state.row);
+          cardsAPI.createCard(formDate)
+          .then(response => {
+              console.log("Succes");
+          });
+      }
+
+      deleteCard(event) {
         console.log(event);
-    }
+      }
 
-    return (
-        <div className="rowCard">
-            <div className={clasN}>
-                {renderSwitch(id)}
+    render() {
+        let clasN = "rowHeader" + this.props.id;
+        const {addMode, cards} = this.state;
+        return (
+            <div className="rowCard">
+                <div className={clasN}>
+                    {this.props.title}
+                </div>
+                    { cards.filter( c => c.row == this.props.id).map( c => <Card key = {c.id} id = {c.id} text = {c.text} row = {c.row}  /> ) }
+                {
+                    !addMode 
+                    ? <div className="addCard" onClick={ () => {this.changeMode(true)}}>
+                        <img src={more} alt="more" className="add"  />
+                        <div className="addCardText">Добавить карточку</div>
+                     </div>
+                    :   <form onSubmit={this.addNewCard} className="addForm" >
+                            <textarea onChange={this.handleFieldChange} type="text" placeholder="Ввести заголовок для этой карточки" className="inputAdd" name = "text" value={this.state.text}  ></textarea>
+                            <div className="addCardNone">
+                                <button  className="addCardTextAdd">Добавить карточку</button>
+                                <img src={close1} alt="more" className="closeAdd" onClick={ () => {this.changeMode(false)}} />                
+                            </div> 
+                        </form>      
+                }                            
             </div>
-                { cardsRow }
-            
-            {
-                !addMode 
-                ? <div className="addCard" onClick={ () => {setAddMode(true)}}>
-                    <img src={more} alt="more" className="add" />
-                    <div className="addCardText">Добавить карточку</div>
-                    </div>
-                : 
-                <form onSubmit = {handleCreateNewCard} className="addForm" >
-                    <textarea type="text" placeholder="Ввести заголовок для этой карточки" className="inputAdd" onChange = {onFieldChange}></textarea>
-                    <div className="addCardNone">
-                        <button className="addCardTextAdd">Добавить карточку</button>
-                        <img src={close1} alt="more" className="closeAdd" onClick={ () => {setAddMode(false)}} />                
-                    </div> 
-                </form>
-    
-            }                            
-        </div>
-    )
-    
+        )
+    }
     
 }
 

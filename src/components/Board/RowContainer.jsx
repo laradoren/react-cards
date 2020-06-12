@@ -1,46 +1,51 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import './Board.css';
 import Row from './Row';
-import {  requestCards, onTitleChange } from './../../redux/board-reducer';
-import { compose } from 'redux';
 
-class RowContainer extends React.Component {
-    componentDidMount() {
-      this.props.requestCards();
+
+class RowContainer extends Component {  
+ 
+      componentDidMount() {
+        cardsAPI.requestCards()
+        .then(response => {
+            this.setState({
+              cards: response
+            });
+          });
+      }
+
+      changeMode(value){
+        this.setState({
+            addMode: value
+          });
+      }
+
+      handleFieldChange(event) {
+        this.setState({
+            text: event.target.value
+        });
+      }
+
+      addNewCard(event) {
+          const formDate = new FormData();
+          formDate.append('text',this.state.text);
+          formDate.append('row',this.state.row);
+          cardsAPI.createCard(formDate)
+          .then(response => {
+              console.log("Succes");
+          });
+      }
+
+      deleteCard(event) {
+        console.log(event);
+      }
+
+    render() {
+        return (
+            <Row />
+        )
     }
-   
-    render(){
-            return <> 
-                <Row  
-                cards = {this.props.cards}
-                id = {this.props.id} onTitleChange = {this.props.onTitleChange}
-            />
-        </>
-    }
+    
 }
 
-/*let mapStateToProps = (state) => {
-    return {
-        users: state.usersPage.users,
-        pageSize: state.usersPage.pageSize,
-        totalUsersCount: state.usersPage.totalUsersCount,
-        currentPage: state.usersPage.currentPage,
-        isFetching: state.usersPage.isFetching,
-        followingInProgress: state.usersPage.followingInProgress
-    }
-}*/
-
-let mapStateToProps = (state) => {
-    return {
-        cards: state.boardPage.cards,
-        newTitle: state.boardPage.newTitle,
-        newRow: state.boardPage.newRow
-    }
-}
-
-
-export default compose(
-    connect(mapStateToProps, {
-      requestCards, onTitleChange
-    })
-)(RowContainer);
+export default RowContainer;
