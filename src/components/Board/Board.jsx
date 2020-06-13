@@ -1,6 +1,6 @@
 import React from 'react';
 import './Board.css';
-import Row from './Row';
+import RowContainer from './RowContainer';
 
 const Board = (props) => {
     const row = [{id: 0,
@@ -15,7 +15,7 @@ const Board = (props) => {
     <div className="boardBlock">
         <div className="boardCards">
             {
-                row.map( r =>  <Row key = {r.id}  id = {r.id} title = {r.title} token = {props.token} /> )
+                row.map( r =>  <RowContainer key = {r.id}  id = {r.id} title = {r.title} token = {props.token} /> )
             }  
         </div>
     </div>
