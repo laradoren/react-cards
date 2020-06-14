@@ -2,25 +2,26 @@ import React, { Component } from 'react';
 import './Board.css';
 import RowContainer from './RowContainer';
 import {DragDropContext} from 'react-beautiful-dnd';
-import { sortCards, updateCard } from '../../redux/board-reducer';
+import {  sortCards } from '../../redux/board-reducer';
 import { connect } from 'react-redux';
 
-
-class Board extends Component {
-     
+class Board extends Component {     
     onDragEnd = result => {
         //reordering logic
         const {destination, source, draggableId} = result;
         if(!destination) {
             return;            
         }
-        this.props.sortCards(
-            source.droppableId,
-            destination.droppableId,
-            source.index,
-            destination.index,
-            draggableId
-        );
+        if(destination.droppableId === source.droppableId && destination.index == source.index) {
+            return;
+        }            
+        const card = this.props.cards.find( c => c.id == draggableId);
+        let body = {
+            "row": destination.droppableId,
+            "seq_num": destination.index,
+            "text": card.text
+        }
+        this.props.sortCards(draggableId, body, source.droppableId, destination.droppableId, source.index, destination.index);   
     }; 
     render() {
         return (
@@ -40,7 +41,8 @@ class Board extends Component {
 
 
 const mapStateToProps = state => ({
-    rowList: state.boardPage.rowList
+    rowList: state.boardPage.rowList,
+    cards: state.boardPage.cards
 });
 
-export default connect(mapStateToProps, {sortCards, updateCard})(Board);
+export default connect(mapStateToProps, {sortCards})(Board);

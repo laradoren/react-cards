@@ -5,7 +5,7 @@ const instance = axios.create({
     headers: {
         'Authorization' : `JWT ${localStorage.getItem('token')}` , 
         'Accept': 'application/json',
-        'Content-Type': 'text/plain'}
+        'Content-Type': 'application/json'}
 });
 
 export const cardsAPI = {
@@ -19,8 +19,8 @@ export const cardsAPI = {
     deleteCard(id) {
         return instance.delete(`cards/${id}/`);
     },
-    updateCard(id) {
-        return instance.patch(`cards/${id}/`);//????
+    updateCard(id, body) {
+        return instance.patch(`cards/${id}/`, body);//????
     }
 }; 
 

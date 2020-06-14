@@ -4,7 +4,7 @@ const SET_CARDS = 'SET_CARDS';
 const SET_FIELDS = 'SET_FIELDS';
 const DELETE_CARD = 'DELETE_CARD';
 const ADD_CARD = 'ADD_CARD';
-const DRAG_HAPPEND = 'DRAG_HAPPEND';
+const UPDATE_CARD = 'UPDATE_CARD';
 
 let initialState = {
     cards: [ 
@@ -32,24 +32,36 @@ export const boardReducer = (state = initialState, action) => {
             return {...state, cards: newCards};
         case ADD_CARD: 
             return {...state, cards: [...state.cards, action.card]};
-        case DRAG_HAPPEND: 
+        case UPDATE_CARD: 
             let newState = [...state.cards];
-            const {droppableIdStart, droppableIdEnd, droppableIndexStart, droppableIndexEnd,draggableId} = action.payload;
-            //in same row
-            if(droppableIdStart === droppableIdEnd) {
-                const list = state.cards.filter(list => droppableIdStart === list.row);                
-                const card = list.splice(droppableIndexStart, 1); 
-                card[0].seq_num = droppableIndexEnd;
-                list.splice(droppableIndexEnd, 0, ...card);                        
-            }
-            //other row
-            if(droppableIdStart !== droppableIdEnd) {                
-                const listStart = state.cards.filter(list => droppableIdStart == list.row);
-                const card = listStart.splice(droppableIndexStart, 1);                
-                const listEnd = state.cards.filter(list => droppableIdEnd == list.row);
-                card[0].row = droppableIdEnd;
-                card[0].seq_num = droppableIndexEnd;
-                listEnd.splice(droppableIndexEnd, 0, ...card);
+            console.log(newState);
+            const {data, id, dropIdStart, dropIdEnd, dropIndexStart, dropIndexEnd} = action.payload;
+            let count = 0;
+            if(dropIdStart == dropIdEnd) {
+                const list = state.cards.filter( l => dropIdStart === l.row);
+                list.splice(dropIndexStart, 1);
+                list.splice(dropIndexEnd, 0, data);
+                const index = newState.findIndex(s => s.row === dropIdStart);
+                newState.splice(index, list.length, ...list);
+                newState.map( c => {
+                    newState.map( n => {
+                        if(c.id === n.id) {
+                            count++;
+                            console.log(c.id, n.id);
+                        }
+                    });
+                });
+                if(count > newState.length) {
+                    window.location.reload();
+                }               
+            };
+            if(dropIdStart != dropIdEnd) {
+                const listStart = state.cards.filter(list => dropIdStart == list.row);
+                const card = listStart.splice(dropIndexStart, 1);                
+                const listEnd = state.cards.filter(list => dropIdEnd == list.row);
+                card[0].row = dropIdEnd;
+                card[0].seq_num = dropIndexEnd;
+                listEnd.splice(dropIndexEnd, 0, ...card);              
             }
             return {...state, cards: [...newState]};
         default:
@@ -86,11 +98,11 @@ export const deleteCard = (id) => {
 };
 
 //Action for sort cards
-export const sortCards = (droppableIdStart, droppableIdEnd, droppableIndexStart, droppableIndexEnd,draggableId) => ({type: DRAG_HAPPEND, payload: {droppableIdStart, droppableIdEnd, droppableIndexStart, droppableIndexEnd,draggableId}});
+const updateCards = (data, id, dropIdStart, dropIdEnd, dropIndexStart, dropIndexEnd) => ({type: UPDATE_CARD, payload: {data, id,  dropIdStart, dropIdEnd, dropIndexStart, dropIndexEnd}});
 
-export const updateCard = () => {
+export const sortCards = (id, body, dropIdStart, dropIdEnd, dropIndexStart, dropIndexEnd) => {
     return async (dispatch) => {
-        await cardsAPI.updateCard()
-        .then(resp => console.log(resp));
+        let data = await cardsAPI.updateCard(id, body);
+            dispatch(updateCards(data.data, id, dropIdStart, dropIdEnd, dropIndexStart, dropIndexEnd));
     };     
 };
