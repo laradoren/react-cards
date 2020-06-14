@@ -1,10 +1,13 @@
 import React from 'react';
 import s from './Auth.module.css';
+import { useHistory } from 'react-router-dom';
 
 
 const Login = (props) => {
+    const history = useHistory();
+
     const handleFieldChange = (event) =>  {
-        props.setFields(event.target.name,  event.target.value);
+        props.setFields(event.target.name,  event.target.value);        
     };
 
     const handleLogin =  (event) => {
@@ -14,12 +17,13 @@ const Login = (props) => {
         formDate.append('email', props.email);
         formDate.append('password', props.password);
         props.login(formDate);
+        //redirect to singn in
+        history.push('/signin');        
     };
-
     return (
         <div className={s.authBlock}>
             <div className={s.authWindow}>
-                <div className={s.title}>Please Log In</div>
+                <div className={s.title}> Добро пожаловать! Пожалуйста, зарегестрируйтесь или войдите чтобы продолжить</div>
                 <form onSubmit={handleLogin} className = {s.form}>
                     <label htmlFor="">Username</label>
                     <input name="username" type="text" className={s.login} onChange={handleFieldChange} />

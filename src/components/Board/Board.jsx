@@ -1,25 +1,46 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './Board.css';
 import RowContainer from './RowContainer';
+import {DragDropContext} from 'react-beautiful-dnd';
+import { sortCards, updateCard } from '../../redux/board-reducer';
+import { connect } from 'react-redux';
 
-const Board = (props) => {
-    const row = [{id: 0,
-                  title: "ON HOLD"},
-                 {id: 1,
-                  title: "IN PROGRESS"},
-                 {id: 2,
-                  title: "NEEDS REVIEW"},
-                 {id: 3,
-                  title: "APPROVED"}];
-  return (
-    <div className="boardBlock">
-        <div className="boardCards">
-            {
-                row.map( r =>  <RowContainer key = {r.id}  id = {r.id} title = {r.title} token = {props.token} /> )
-            }  
-        </div>
-    </div>
-  );
+
+class Board extends Component {
+     
+    onDragEnd = result => {
+        //reordering logic
+        const {destination, source, draggableId} = result;
+        if(!destination) {
+            return;            
+        }
+        this.props.sortCards(
+            source.droppableId,
+            destination.droppableId,
+            source.index,
+            destination.index,
+            draggableId
+        );
+    }; 
+    render() {
+        return (
+            <DragDropContext onDragEnd = {this.onDragEnd}>
+                <div className="boardBlock">
+                    <div className="boardCards">
+                        {
+                            this.props.rowList.map( r =>  <RowContainer key = {r.id}  id = {r.id} title = {r.title} /> )
+                        }  
+                    </div>
+                </div>
+            </DragDropContext>
+        );
+    }
+
 }
 
-export default Board;
+
+const mapStateToProps = state => ({
+    rowList: state.boardPage.rowList
+});
+
+export default connect(mapStateToProps, {sortCards, updateCard})(Board);

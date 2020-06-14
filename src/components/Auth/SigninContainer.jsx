@@ -17,7 +17,6 @@ let mapStateToProps = (state) => ({
     username: state.authPage.username,
     password: state.authPage.password,
     token: state.authPage.token
-
   });
   
   export default compose(

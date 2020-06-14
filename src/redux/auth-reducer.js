@@ -32,15 +32,20 @@ export const getToken = ()=>({type:GET_TOKEN});
 
 export const signin = (formData) => {
     return async (dispatch) => {
-        let data = await authAPI.signin(formData);
-        dispatch(setToken(data.data.token));
-        localStorage.setItem('token', data.data.token);
+        await authAPI.signin(formData).then ( response => {
+            if(response.status === 200) {
+                dispatch(setToken(response.data.token));
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('message', "Вы авторизованы");
+                window.location.reload();
+            }            
+        });  
     }; 
 };
 
 export const login = (formData) => {
     return async (dispatch) => {
-        let data = await authAPI.login(formData);
+        await authAPI.login(formData);       
     }; 
 };
 

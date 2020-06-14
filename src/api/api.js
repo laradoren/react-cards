@@ -1,6 +1,5 @@
 import * as axios from 'axios';
 
-
 const instance = axios.create({
     baseURL: "https://trello.backend.tests.nekidaem.ru/api/v1/",
     headers: {
@@ -19,6 +18,9 @@ export const cardsAPI = {
     },
     deleteCard(id) {
         return instance.delete(`cards/${id}/`);
+    },
+    updateCard(id) {
+        return instance.patch(`cards/${id}/`);//????
     }
 }; 
 

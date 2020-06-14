@@ -6,6 +6,10 @@ import { withRouter } from 'react-router-dom';
 import {login, setFields} from './../../redux/auth-reducer';
 
 class LoginContainer extends Component {
+  componentDidMount() {
+    localStorage.clear();
+  }
+
   render() {
     return (
       <Login login = {this.props.login}  setFields = {this.props.setFields} username = {this.props.username} email = {this.props.email} password = {this.props.password}

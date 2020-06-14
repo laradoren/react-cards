@@ -5,13 +5,18 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'redux';
 import {requestCards, setFields, addNewCard, deleteCard} from './../../redux/board-reducer';
-import axios from 'axios';
 
 
 class RowContainer extends Component {   
-  componentDidMount() {
-      this.props.requestCards();
+  componentDidMount() {     
+      let token = localStorage.getItem('token');
+      let {history} = this.props;
+      if(!token){
+        history.push('/signin')
+      } 
+      this.props.requestCards();      
   }
+
   render() {
     return (
         <Row  {...this.props} cards = {this.props.cards} handleFieldChange={this.props.setFields} addNewCard = {this.props.addNewCard} deleteCard= {this.props.deleteCard} />
@@ -22,8 +27,7 @@ class RowContainer extends Component {
 let mapStateToProps = (state) => ({
   cards: state.boardPage.cards,
   text: state.boardPage.text,
-  row: state.boardPage.row,
-  token: state.authPage.token
+  row: state.boardPage.row
 });
 
 export default compose(
